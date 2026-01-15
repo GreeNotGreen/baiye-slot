@@ -46,11 +46,12 @@ body {
   cursor: not-allowed;
 }
 
+/* ✅ 特殊格子仍然绿色 */
 .slot.highlight {
-  background: #e74c3c; /* 特殊格子颜色 */
-  color: #fff;
+  background: #2ecc71;
+  color: #000;
 }
-
-.slot.highlight:hover {
-  background: #c0392b;
+.slot.highlight.taken {
+  background: #444; /* 已占用仍然灰色 */
+  color: #bbb;
 }
