@@ -3,6 +3,15 @@ body {
   color: #f1f1f1;
   font-family: "Segoe UI", Arial, sans-serif;
   text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+h2 { margin-top: 20px; }
+
+#grid {
+  max-width: 520px;
+  margin: 20px auto;
 }
 
 .group {
@@ -20,38 +29,53 @@ body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
-  max-width: 520px;
-  margin: 0 auto 30px auto;
+  margin-bottom: 20px;
 }
 
 .slot {
   padding: 18px 0;
   border-radius: 10px;
-  background: #1e1e1e;
-  border: 1px solid #333;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #fff; /* 默认文字白色 */
+  border: 2px solid #fff; /* 未选中白边框 */
 }
 
-.slot:hover {
-  background: #2ecc71;
-  color: #000;
+/* 鼠标悬停 */
+.slot:not(.taken):hover {
+  filter: brightness(1.2);
+  border-color: #fff;
 }
 
 .slot.taken {
-  background: #444;
-  border-color: #555;
-  color: #bbb;
+  opacity: 0.7;
   cursor: not-allowed;
+  border-color: #888; /* 已选边框灰色 */
 }
 
-/* ✅ 特殊格子仍然绿色 */
-.slot.highlight {
-  background: #2ecc71;
-  color: #000;
+/* 分类颜色 */
+.slot.yellow { background: #f5d564; color: #000; }
+.slot.green  { background: #7fe397; color: #000; }
+.slot.blue   { background: #7fb9f5; color: #000; }
+
+/* 底部说明 */
+#legend {
+  max-width: 520px;
+  margin: 0 auto 30px auto;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
 }
-.slot.highlight.taken {
-  background: #444; /* 已占用仍然灰色 */
-  color: #bbb;
+
+#legend span { margin-right: 15px; }
+
+button {
+  padding: 6px 12px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
+button:hover { filter: brightness(1.2); }
