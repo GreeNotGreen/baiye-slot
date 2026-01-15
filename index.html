@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>30人抢号</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body {
+  background: #0f0f0f;
+  color: #f1f1f1;
+  font-family: "Segoe UI", Arial, sans-serif;
+  text-align: center;
+}
+
+#grid {
+  max-width: 520px;
+  margin: 30px auto;
+}
+
+.group {
+  margin-bottom: 40px;
+}
+
+.group h3 {
+  margin: 16px 0;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #f5c542;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.slot {
+  padding: 18px 0;
+  border-radius: 10px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slot:hover {
+  background: #2ecc71;
+  color: #000;
+}
+
+.slot.taken {
+  background: #444;
+  border-color: #555;
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+</style>
+</head>
+
+<body>
+<h2>🎮 百业战 30 人抢号</h2>
+<p>点击空位 → 输入名字 → 立即锁定</p>
+
+<div id="grid">
+  <div class="group">大团</div>
+  <div class="group">打野</div>
+</div>
+
+<script>
+const client = window.supabase.createClient(
+  "https://sdkrumvzefqgcrnomesm.supabase.co",
+  "sb_publishable_dGKp0d2Se_-jJz1JReK24A_Qfv4S5yE"
+);
+
+async function load() {
+  const { data, error } = await client
+    .from("slots")
+    .select("*")
+    .order("slot_number");
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const groups = {};
+
+  data.forEach(s => {
+    if (!groups[s.group_type]) groups[s.group_type] = [];
+    groups[s.group_type].push(s);
+  });
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  for (const type in groups) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "group " + type;
+
+
+    const title = document.createElement("h3");
+    title.innerText = `【${type}】`;
+    groupDiv.appendChild(title);
+
+    const section = document.createElement("div");
+    section.className = "grid";
+
+    groups[type].forEach(s => {
+      const div = document.createElement("div");
+      div.className = "slot" + (s.taken ? " taken" : "");
+      div.innerText = s.taken
+        ? `${s.slot_number}\n${s.name}`
+        : s.slot_number;
+
+      if (!s.taken) div.onclick = () => take(s.slot_number);
+      section.appendChild(div);
+    });
+
+    groupDiv.appendChild(section);
+    grid.appendChild(groupDiv);
+  }
+}
+
+async function take(num) {
+  const name = prompt("请输入昵称 / 游戏ID");
+  if (!name) return;
+
+  const { error } = await client
+    .from("slots")
+    .update({ taken: true, name })
+    .eq("slot_number", num)
+    .eq("taken", false);
+
+  if (error) alert(error.message);
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
