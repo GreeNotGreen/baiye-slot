@@ -58,13 +58,27 @@ async function take(num) {
   const name = prompt("请输入昵称 / 游戏ID");
   if (!name) return;
 
-  const { error } = await client
+  // 尝试更新
+  const { data, error } = await client
     .from("slots")
     .update({ taken: true, name })
     .eq("slot_number", num)
     .eq("taken", false);
 
-  if (error) alert("失败：" + error.message);
+  if (error) {
+    alert("抢号失败：" + error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    alert("手慢无！");
+    return;
+  }
+
+  // 成功抢号才弹窗
+  alert(`蒸蚌！！\n昵称：${name}\n位置：${num}`);
+
+  // 刷新页面显示已抢号
   load();
 }
 
