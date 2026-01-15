@@ -16,6 +16,7 @@ async function load() {
 
   const groups = {};
 
+  // 分类分组
   data.forEach(s => {
     if (!groups[s.group_type]) groups[s.group_type] = [];
     groups[s.group_type].push(s);
@@ -24,7 +25,7 @@ async function load() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  // 先显示 大团，再显示 打野
+  // 固定显示顺序：大团 → 打野
   ["大团", "打野"].forEach(type => {
     if (!groups[type]) return;
 
@@ -42,12 +43,13 @@ async function load() {
       const div = document.createElement("div");
       div.className = "slot" + (s.taken ? " taken" : "");
 
-      // 特殊格子高亮
+      // ✅ 5,10,15,20,25,30 保持绿色
       if ([5, 10, 15, 20, 25, 30].includes(s.slot_number)) {
         div.classList.add("highlight");
       }
 
       div.innerText = s.taken ? `${s.slot_number}\n${s.name}` : s.slot_number;
+
       if (!s.taken) div.onclick = () => take(s.slot_number);
       section.appendChild(div);
     });
@@ -67,10 +69,7 @@ async function take(num) {
     .eq("slot_number", num)
     .eq("taken", false);
 
-  if (error) {
-    alert("抢号失败：" + error.message);
-  }
-
+  if (error) alert("抢号失败：" + error.message);
   load();
 }
 
